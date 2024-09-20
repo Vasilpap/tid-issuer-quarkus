@@ -4,13 +4,16 @@ import gr.hua.model.entity.Company;
 import gr.hua.model.enums.RegistrationDecision;
 import gr.hua.model.enums.RegistrationState;
 import gr.hua.model.mapper.CompanyMapper;
+import gr.hua.model.request.ProcessRequest;
 import gr.hua.model.response.CompanyResponse;
 import gr.hua.repository.CompanyRepository;
 import io.quarkus.vertx.http.runtime.devmode.ResourceNotFoundData;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.resource.ResourceException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
+import jakarta.ws.rs.NotAcceptableException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 
@@ -32,10 +35,13 @@ public class IssuingService {
         return companyMapper.toCompanyResponseList(companies);
     }
 
-    public void processPending(Long companyId, RegistrationDecision decision){
-        Company company = companyRepository.findByIdOptional(companyId)
+    @Transactional
+    public void processPending(ProcessRequest processRequest){
+        Company company = companyRepository.findByIdOptional(processRequest.getCompanyId())
                 .orElseThrow(()->new NoSuchElementException("Company not found")
                 );
+        RegistrationDecision decision = processRequest.getDecision();
+        System.out.println(decision);
         if (company.getState() != RegistrationState.PENDING) {
             throw new NoSuchElementException("Company has been processed");
         }
@@ -44,7 +50,10 @@ public class IssuingService {
             company.setState(RegistrationState.ACCEPTED);
         } else if(decision == RegistrationDecision.DENY) {
             company.setState(RegistrationState.DENIED);
+        }else {
+            throw new NotAcceptableException("not acceptable decision value"+decision);
         }
+        companyRepository.persist(company);
     }
 
     private String generateTaxId() {

@@ -1,6 +1,8 @@
 package gr.hua.resource;
 
 import gr.hua.model.enums.RegistrationDecision;
+import gr.hua.model.request.ProcessRequest;
+import gr.hua.model.request.UpdateRequest;
 import gr.hua.model.response.CompanyResponse;
 import gr.hua.service.IssuingService;
 import jakarta.annotation.security.RolesAllowed;
@@ -8,6 +10,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
+
 import java.util.List;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -29,11 +33,8 @@ public class EmployeeResource {
     }
 
     @PUT
-    @Path("/{id}")
-    public Response process(
-            @PathParam("id") Long id,
-            @QueryParam("decision") RegistrationDecision decision) {
-        issuingService.processPending(id,decision);
+    public Response process(ProcessRequest processRequest){
+        issuingService.processPending(processRequest);
         return Response.accepted().build();
     }
 }
