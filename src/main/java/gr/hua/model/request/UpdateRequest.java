@@ -11,7 +11,7 @@ import lombok.*;
 public class UpdateRequest {
 
     @NotNull
-    private Long Id;
+    private Long id;
     @NotNull
     private String name;
     @NotNull

@@ -5,6 +5,7 @@ import gr.hua.model.enums.RegistrationState;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -16,7 +17,7 @@ public class CompanyResponse {
     private KeycloakUser representative;
     private String name;
     private String email;
-    private Long taxId;
+    private String taxId;
     private RegistrationState state;
     private Timestamp timestamp;
     private String goal;
