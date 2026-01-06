@@ -10,7 +10,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 
 import java.util.List;
 
@@ -35,6 +34,6 @@ public class EmployeeResource {
     @PUT
     public Response process(ProcessRequest processRequest){
         issuingService.processPending(processRequest);
-        return Response.accepted().build();
+        return Response.ok().build();
     }
 }

@@ -12,13 +12,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 
 @ApplicationScoped
 @RequiredArgsConstructor
-public class RegistationService {
+public class RegistrationService {
 
     @Inject
     CompanyRepository companyRepository;
@@ -30,6 +28,10 @@ public class RegistationService {
     public CompanyResponse getRegistrationByRep() {
         KeycloakUser user = keycloakService.getUser();
         Company company = companyRepository.findByRepId(user.getId());
+
+        if (company == null) {
+            return null;
+        }
 
         return companyMapper.toCompanyResponse(company);
     }

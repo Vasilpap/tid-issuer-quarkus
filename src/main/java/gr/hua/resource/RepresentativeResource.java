@@ -2,7 +2,7 @@ package gr.hua.resource;
 
 import gr.hua.model.request.UpdateRequest;
 import gr.hua.model.response.CompanyResponse;
-import gr.hua.service.RegistationService;
+import gr.hua.service.RegistrationService;
 import gr.hua.model.request.RegistrationRequest;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -23,7 +23,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 public class RepresentativeResource {
 
     @Inject
-    RegistationService registationService;
+    RegistrationService registrationService;
 
     @GET
     @APIResponse(
@@ -33,7 +33,7 @@ public class RepresentativeResource {
     )
     public CompanyResponse findCompanyRegistration() {
 
-        return registationService.getRegistrationByRep();
+        return registrationService.getRegistrationByRep();
     }
 
     @PUT
@@ -44,8 +44,8 @@ public class RepresentativeResource {
     )
 
     public Response updateCompanyRegistration(UpdateRequest request) {
-        registationService.updateRegistration(request);
-        return Response.accepted().build();
+        registrationService.updateRegistration(request);
+        return Response.ok().build();
     }
 
     @POST
@@ -58,8 +58,8 @@ public class RepresentativeResource {
      */
     public Response registerCompany(RegistrationRequest request) {
 
-        registationService.registerCompany(request);
-        return Response.accepted().build();
+        registrationService.registerCompany(request);
+        return Response.status(Response.Status.CREATED).build();
     }
 
 }

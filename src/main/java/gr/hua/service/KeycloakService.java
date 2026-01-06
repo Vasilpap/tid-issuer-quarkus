@@ -2,6 +2,7 @@ package gr.hua.service;
 
 import gr.hua.model.entity.KeycloakUser;
 import gr.hua.repository.KeycloakUserRepository;
+import io.quarkus.oidc.IdToken;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -13,6 +14,7 @@ public class KeycloakService {
     @Inject
     KeycloakUserRepository keycloakUserRepository;
     @Inject
+    @IdToken
     JsonWebToken jwt;
 
     @Transactional
