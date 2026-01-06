@@ -7,14 +7,12 @@ import gr.hua.model.mapper.CompanyMapper;
 import gr.hua.model.request.ProcessRequest;
 import gr.hua.model.response.CompanyResponse;
 import gr.hua.repository.CompanyRepository;
-import io.quarkus.vertx.http.runtime.devmode.ResourceNotFoundData;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.resource.ResourceException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import jakarta.ws.rs.NotAcceptableException;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -41,7 +39,7 @@ public class IssuingService {
                 .orElseThrow(()->new NoSuchElementException("Company not found")
                 );
         RegistrationDecision decision = processRequest.getDecision();
-        System.out.println(decision);
+        Log.infof("Processing company ID %d with decision: %s", processRequest.getCompanyId(), decision);
         if (company.getState() != RegistrationState.PENDING) {
             throw new NoSuchElementException("Company has been processed");
         }
