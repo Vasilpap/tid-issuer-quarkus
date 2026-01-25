@@ -38,13 +38,18 @@ public class RegistrationService {
 
     @Transactional
     public void updateRegistration(UpdateRequest updateRequest) {
+        KeycloakUser user = keycloakService.getUser();
+        Company company = companyRepository.findByRepId(user.getId());
 
-        Company company = companyRepository.findById(updateRequest.getId());
-
-        if (company.getState() == RegistrationState.ACCEPTED) {
-;           throw new ValidationException("registration already accepted");
+        if (company == null) {
+            throw new jakarta.ws.rs.NotFoundException("No registration found");
         }
 
+        if (company.getState() == RegistrationState.ACCEPTED) {
+            throw new ValidationException("registration already accepted");
+        }
+
+        // Update fields (ID from request ignored for safety)
         company.setName(updateRequest.getName());
         company.setEmail(updateRequest.getEmail());
         company.setGoal(updateRequest.getGoal());

@@ -143,7 +143,8 @@ class RegistrationServiceTest {
         request.setHq("Updated HQ");
         request.setExecutives("Updated Executives");
 
-        when(companyRepository.findById(1L)).thenReturn(pendingCompany);
+        when(keycloakService.getUser()).thenReturn(mockUser);
+        when(companyRepository.findByRepId(mockUser.getId())).thenReturn(pendingCompany);
 
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
 
@@ -175,7 +176,8 @@ class RegistrationServiceTest {
         request.setHq("Updated Denied HQ");
         request.setExecutives("Updated Denied Executives");
 
-        when(companyRepository.findById(3L)).thenReturn(deniedCompany);
+        when(keycloakService.getUser()).thenReturn(mockUser);
+        when(companyRepository.findByRepId(mockUser.getId())).thenReturn(deniedCompany);
 
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
 
@@ -203,7 +205,8 @@ class RegistrationServiceTest {
         request.setHq("Should Not Update HQ");
         request.setExecutives("Should Not Update Executives");
 
-        when(companyRepository.findById(2L)).thenReturn(acceptedCompany);
+        when(keycloakService.getUser()).thenReturn(mockUser);
+        when(companyRepository.findByRepId(mockUser.getId())).thenReturn(acceptedCompany);
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> {
@@ -227,7 +230,8 @@ class RegistrationServiceTest {
         request.setHq("Updated HQ");
         request.setExecutives("Updated Executives");
 
-        when(companyRepository.findById(1L)).thenReturn(pendingCompany);
+        when(keycloakService.getUser()).thenReturn(mockUser);
+        when(companyRepository.findByRepId(mockUser.getId())).thenReturn(pendingCompany);
 
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
 
@@ -254,7 +258,8 @@ class RegistrationServiceTest {
         request.setHq("Updated HQ");
         request.setExecutives("Updated Executives");
 
-        when(companyRepository.findById(1L)).thenReturn(pendingCompany);
+        when(keycloakService.getUser()).thenReturn(mockUser);
+        when(companyRepository.findByRepId(mockUser.getId())).thenReturn(pendingCompany);
 
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
 
