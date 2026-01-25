@@ -3,7 +3,6 @@ package gr.hua.service;
 import gr.hua.model.entity.KeycloakUser;
 import gr.hua.repository.KeycloakUserRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.oidc.IdToken;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -28,8 +27,7 @@ class KeycloakServiceTest {
     KeycloakUserRepository keycloakUserRepository;
 
     @InjectMock
-    @IdToken
-    JsonWebToken jwt;
+    JsonWebToken jwt;  // No @IdToken - service uses access token
 
     private KeycloakUser existingUser;
 
