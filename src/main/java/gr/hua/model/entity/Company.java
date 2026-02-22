@@ -4,7 +4,6 @@ import gr.hua.model.enums.RegistrationState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
@@ -14,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 public class Company {
 
@@ -43,6 +41,9 @@ public class Company {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleDocument> articleDocuments = new ArrayList<>();
+
+    public Company() {
+    }
 
 
     public Company(KeycloakUser representative, String name, String email, String goal, String hq, String executives) {

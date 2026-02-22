@@ -3,7 +3,6 @@ package gr.hua.model.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
@@ -11,7 +10,6 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 public class ArticleDocument {
 
@@ -36,6 +34,9 @@ public class ArticleDocument {
 
     @Column(nullable = false)
     private Timestamp uploadedAt;
+
+    public ArticleDocument() {
+    }
 
     public ArticleDocument(Company company, String objectKey, String originalFilename, String contentType, Long fileSize) {
         this.company = company;

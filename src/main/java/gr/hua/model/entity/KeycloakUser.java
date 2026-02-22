@@ -1,16 +1,13 @@
 package gr.hua.model.entity;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 public class KeycloakUser {
 
@@ -22,5 +19,8 @@ public class KeycloakUser {
     public String keycloakId;
 
     public String username;
+
+    public KeycloakUser() {
+    }
 
 }
