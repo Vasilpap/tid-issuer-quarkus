@@ -1,12 +1,14 @@
 package gr.hua.service;
 
 import gr.hua.model.entity.Company;
+import gr.hua.model.entity.ArticleDocument;
 import gr.hua.model.entity.KeycloakUser;
 import gr.hua.model.enums.RegistrationState;
 import gr.hua.model.mapper.CompanyMapper;
 import gr.hua.model.request.RegistrationRequest;
 import gr.hua.model.request.UpdateRequest;
 import gr.hua.model.response.CompanyResponse;
+import gr.hua.repository.ArticleDocumentRepository;
 import gr.hua.repository.CompanyRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
@@ -36,6 +39,12 @@ class RegistrationServiceTest {
 
     @InjectMock
     CompanyMapper companyMapper;
+
+    @InjectMock
+    StorageService storageService;
+
+    @InjectMock
+    ArticleDocumentRepository articleDocumentRepository;
 
     private KeycloakUser mockUser;
     private Company pendingCompany;
@@ -56,7 +65,6 @@ class RegistrationServiceTest {
                 "Pending Company",
                 "pending@company.com",
                 "Pending goal",
-                "http://pending.com",
                 "Pending HQ",
                 "Pending Executives"
         );
@@ -68,7 +76,6 @@ class RegistrationServiceTest {
                 "Accepted Company",
                 "accepted@company.com",
                 "Accepted goal",
-                "http://accepted.com",
                 "Accepted HQ",
                 "Accepted Executives"
         );
@@ -82,7 +89,6 @@ class RegistrationServiceTest {
                 "Denied Company",
                 "denied@company.com",
                 "Denied goal",
-                "http://denied.com",
                 "Denied HQ",
                 "Denied Executives"
         );
@@ -139,7 +145,6 @@ class RegistrationServiceTest {
         request.setName("Updated Name");
         request.setEmail("updated@company.com");
         request.setGoal("Updated goal");
-        request.setArticlesOfAssociation("http://updated.com");
         request.setHq("Updated HQ");
         request.setExecutives("Updated Executives");
 
@@ -158,21 +163,19 @@ class RegistrationServiceTest {
         assertEquals("Updated Name", updatedCompany.getName());
         assertEquals("updated@company.com", updatedCompany.getEmail());
         assertEquals("Updated goal", updatedCompany.getGoal());
-        assertEquals("http://updated.com", updatedCompany.getArticlesOfAssociation());
         assertEquals("Updated HQ", updatedCompany.getHq());
         assertEquals("Updated Executives", updatedCompany.getExecutives());
     }
 
     @Test
-    @DisplayName("updateRegistration with DENIED company should update all fields")
-    void updateRegistration_withDeniedCompany_shouldUpdateAllFields() {
+    @DisplayName("updateRegistration with DENIED company should update all fields and reset to PENDING")
+    void updateRegistration_withDeniedCompany_shouldUpdateAllFieldsAndResetToPending() {
         // Arrange
         UpdateRequest request = new UpdateRequest();
         request.setId(3L);
         request.setName("Updated Denied");
         request.setEmail("updated-denied@company.com");
         request.setGoal("Updated denied goal");
-        request.setArticlesOfAssociation("http://updated-denied.com");
         request.setHq("Updated Denied HQ");
         request.setExecutives("Updated Denied Executives");
 
@@ -189,7 +192,7 @@ class RegistrationServiceTest {
         Company updatedCompany = companyCaptor.getValue();
 
         assertEquals("Updated Denied", updatedCompany.getName());
-        assertEquals(RegistrationState.DENIED, updatedCompany.getState());
+        assertEquals(RegistrationState.PENDING, updatedCompany.getState());
     }
 
     @Test
@@ -201,7 +204,6 @@ class RegistrationServiceTest {
         request.setName("Should Not Update");
         request.setEmail("should-not-update@company.com");
         request.setGoal("Should not update");
-        request.setArticlesOfAssociation("http://should-not-update.com");
         request.setHq("Should Not Update HQ");
         request.setExecutives("Should Not Update Executives");
 
@@ -226,7 +228,6 @@ class RegistrationServiceTest {
         request.setName("Updated Name");
         request.setEmail("updated@company.com");
         request.setGoal("Updated goal");
-        request.setArticlesOfAssociation("http://updated.com");
         request.setHq("Updated HQ");
         request.setExecutives("Updated Executives");
 
@@ -254,7 +255,6 @@ class RegistrationServiceTest {
         request.setName("Updated Name");
         request.setEmail("updated@company.com");
         request.setGoal("Updated goal");
-        request.setArticlesOfAssociation("http://updated.com");
         request.setHq("Updated HQ");
         request.setExecutives("Updated Executives");
 
@@ -281,7 +281,6 @@ class RegistrationServiceTest {
         request.setName("New Company");
         request.setEmail("new@company.com");
         request.setGoal("New goal");
-        request.setArticlesOfAssociation("http://new.com");
         request.setHq("New HQ");
         request.setExecutives("New Executives");
 
@@ -299,7 +298,6 @@ class RegistrationServiceTest {
         assertEquals("New Company", createdCompany.getName());
         assertEquals("new@company.com", createdCompany.getEmail());
         assertEquals("New goal", createdCompany.getGoal());
-        assertEquals("http://new.com", createdCompany.getArticlesOfAssociation());
         assertEquals("New HQ", createdCompany.getHq());
         assertEquals("New Executives", createdCompany.getExecutives());
         assertEquals(RegistrationState.PENDING, createdCompany.getState());
@@ -314,7 +312,6 @@ class RegistrationServiceTest {
         request.setName("New Company");
         request.setEmail("new@company.com");
         request.setGoal("New goal");
-        request.setArticlesOfAssociation("http://new.com");
         request.setHq("New HQ");
         request.setExecutives("New Executives");
 
@@ -333,5 +330,56 @@ class RegistrationServiceTest {
         assertNotNull(createdCompany.getRepresentative());
         assertEquals(mockUser.getId(), createdCompany.getRepresentative().getId());
         assertEquals(mockUser.getKeycloakId(), createdCompany.getRepresentative().getKeycloakId());
+    }
+
+    @Test
+    @DisplayName("deleteRegistration with PENDING company should delete all files and company")
+    void deleteRegistration_withPendingCompany_shouldDeleteAllFilesAndCompany() {
+        // Arrange
+        ArticleDocument firstDocument = new ArticleDocument(
+                pendingCompany,
+                "first-file-key",
+                "first.pdf",
+                "application/pdf",
+                100L
+        );
+        ArticleDocument secondDocument = new ArticleDocument(
+                pendingCompany,
+                "second-file-key",
+                "second.pdf",
+                "application/pdf",
+                200L
+        );
+
+        when(keycloakService.getUser()).thenReturn(mockUser);
+        when(companyRepository.findByRepId(mockUser.getId())).thenReturn(pendingCompany);
+        when(articleDocumentRepository.findByCompanyId(pendingCompany.getId()))
+                .thenReturn(java.util.List.of(firstDocument, secondDocument));
+
+        // Act
+        registrationService.deleteRegistration();
+
+        // Assert
+        verify(storageService).deleteFile("first-file-key");
+        verify(storageService).deleteFile("second-file-key");
+        verify(companyRepository).delete(pendingCompany);
+    }
+
+    @Test
+    @DisplayName("deleteRegistration with ACCEPTED company should throw ValidationException")
+    void deleteRegistration_withAcceptedCompany_shouldThrowValidationException() {
+        // Arrange
+        when(keycloakService.getUser()).thenReturn(mockUser);
+        when(companyRepository.findByRepId(mockUser.getId())).thenReturn(acceptedCompany);
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            registrationService.deleteRegistration();
+        });
+
+        assertEquals("Cannot delete an accepted registration", exception.getMessage());
+        verify(articleDocumentRepository, never()).findByCompanyId(anyLong());
+        verify(storageService, never()).deleteFile(anyString());
+        verify(companyRepository, never()).delete(any(Company.class));
     }
 }

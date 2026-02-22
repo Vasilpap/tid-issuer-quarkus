@@ -86,6 +86,12 @@
             <artifactId>quarkus-test-security-jwt</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- MinIO S3 client -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.11</version>
+        </dependency>
         <!-- mapstruct dependencies -->
         <dependency>
             <groupId>org.projectlombok</groupId>
