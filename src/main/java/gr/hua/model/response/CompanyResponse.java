@@ -5,7 +5,7 @@ import gr.hua.model.enums.RegistrationState;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.UUID;
+import java.util.List;
 
 @Setter
 @Getter
@@ -21,8 +21,7 @@ public class CompanyResponse {
     private RegistrationState state;
     private Timestamp timestamp;
     private String goal;
-    private String articlesOfAssociation;
+    private List<ArticleDocumentResponse> articleDocuments;
     private String hq;
     private String executives;
-
 }

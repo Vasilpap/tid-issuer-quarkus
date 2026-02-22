@@ -61,7 +61,6 @@ class RepresentativeResourceIT {
                 "Test Company",
                 "test@test.com",
                 "Test goal",
-                "http://articles.com",
                 "Test HQ",
                 "Test Executives"
         );
@@ -97,7 +96,6 @@ class RepresentativeResourceIT {
         request.setName("Updated Company Name");
         request.setEmail("updated@test.com");
         request.setGoal("Updated goal");
-        request.setArticlesOfAssociation("http://updated-articles.com");
         request.setHq("Updated HQ");
         request.setExecutives("Updated Executives");
 
@@ -116,6 +114,22 @@ class RepresentativeResourceIT {
         assertEquals("Updated Company Name", updatedCompany.getName());
         assertEquals("updated@test.com", updatedCompany.getEmail());
         assertEquals(RegistrationState.PENDING, updatedCompany.getState());
+    }
+
+    @Test
+    @TestSecurity(user = "rep3", roles = "Representative")
+    @DisplayName("DELETE /api/registration with Representative role should return 204 and remove company")
+    @Transactional
+    void deleteRegistration_withRepresentativeRole_shouldReturn204AndRemoveCompany() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .delete(BASE_PATH)
+                .then()
+                .statusCode(204);
+
+        Company deletedCompany = companyRepository.findByRepId(testRepresentative.getId());
+        assertNull(deletedCompany);
     }
 
     @Test
@@ -149,7 +163,6 @@ class RepresentativeResourceIT {
         request.setName("Should Fail");
         request.setEmail("fail@test.com");
         request.setGoal("Fail");
-        request.setArticlesOfAssociation("http://fail.com");
         request.setHq("Fail HQ");
         request.setExecutives("Fail Executives");
 
@@ -171,7 +184,6 @@ class RepresentativeResourceIT {
         request.setName("Should Fail");
         request.setEmail("fail@test.com");
         request.setGoal("Fail");
-        request.setArticlesOfAssociation("http://fail.com");
         request.setHq("Fail HQ");
         request.setExecutives("Fail Executives");
 
@@ -191,7 +203,6 @@ class RepresentativeResourceIT {
         request.setName("Should Fail");
         request.setEmail("fail@test.com");
         request.setGoal("Fail");
-        request.setArticlesOfAssociation("http://fail.com");
         request.setHq("Fail HQ");
         request.setExecutives("Fail Executives");
 
@@ -205,6 +216,17 @@ class RepresentativeResourceIT {
     }
 
     @Test
+    @DisplayName("DELETE /api/registration without authentication should return 401")
+    void deleteRegistration_withoutAuthentication_shouldReturn401() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .delete(BASE_PATH)
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
     @TestSecurity(user = "employee", roles = "Employee")
     @DisplayName("POST /api/registration with Employee role should return 403")
     void registerCompany_withEmployeeRole_shouldReturn403() {
@@ -212,7 +234,6 @@ class RepresentativeResourceIT {
         request.setName("Should Fail");
         request.setEmail("fail@test.com");
         request.setGoal("Fail");
-        request.setArticlesOfAssociation("http://fail.com");
         request.setHq("Fail HQ");
         request.setExecutives("Fail Executives");
 
@@ -221,6 +242,18 @@ class RepresentativeResourceIT {
                 .body(request)
                 .when()
                 .post(BASE_PATH)
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    @TestSecurity(user = "employee", roles = "Employee")
+    @DisplayName("DELETE /api/registration with Employee role should return 403")
+    void deleteRegistration_withEmployeeRole_shouldReturn403() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .delete(BASE_PATH)
                 .then()
                 .statusCode(403);
     }
