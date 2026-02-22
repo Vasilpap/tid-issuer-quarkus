@@ -1,33 +1,43 @@
 # TID Issuer API (Quarkus)
 
-Backend service for the TID Issuer workflow. It manages company registration, employee approval/denial, and article document upload/download.
+Backend service for registration and approval workflows.
 
 ## Stack
 
-- Java 21, Quarkus 3
-- PostgreSQL (persistence)
-- Keycloak OIDC (authentication and role-based access)
-- MinIO (article document storage)
+- Java 21
+- Quarkus 3
+- PostgreSQL
+- Keycloak OIDC
+- MinIO
 
-## Main API Areas
+## API Areas
 
-- `Representative` role: `/api/registration`
-- `Employee` role: `/api/processing`
-- Health and docs: `/q/health`, `/q/openapi`
+- `/api/registration` (Representative flow)
+- `/api/processing` (Employee flow)
+- `/q/health`, `/q/openapi`
 
-Roles are client roles on `quarkus-api` (`Representative`, `Employee`) and are read from `resource_access.quarkus-api.roles`.
+Client roles are read from `resource_access.quarkus-api.roles`:
 
-## Local Development
+- `Representative`
+- `Employee`
 
-1. Copy `.env.example` to `.env` and set values.
-2. Start infra services (`tid-issuer-infra`).
-3. Run the API in dev mode:
+## Local Run
+
+1. Copy env file:
+
+```bash
+cp .env.example .env
+```
+
+2. Start infra (`tid-issuer-infra`).
+
+3. Run API in dev mode:
 
 ```bash
 ./mvnw compile quarkus:dev
 ```
 
-## Common Commands
+## Build and Test
 
 ```bash
 ./mvnw test
@@ -35,7 +45,15 @@ Roles are client roles on `quarkus-api` (`Representative`, `Employee`) and are r
 ./mvnw package
 ```
 
+## Build Docker Image
+
+```bash
+./mvnw clean -DskipTests package
+docker build -f src/main/docker/Dockerfile.jvm -t ghcr.io/vasilpap/tid-issuer-quarkus:latest .
+docker push ghcr.io/vasilpap/tid-issuer-quarkus:latest
+```
+
 ## Notes
 
-- Keep real secrets out of git; only templates are committed.
-- Dev UI is available in dev mode at `http://localhost:8080/q/dev/`.
+- Keep secrets only in local `.env`.
+- Dev UI: `http://localhost:8080/q/dev/`.
