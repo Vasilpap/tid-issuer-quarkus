@@ -46,6 +46,7 @@ nb-configuration.xml
 # Logs
 *.log
 quarkus.log
+quarkus.log.*
 logs/
 /var/log/
 
