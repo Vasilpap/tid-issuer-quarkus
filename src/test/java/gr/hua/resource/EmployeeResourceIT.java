@@ -53,7 +53,6 @@ class EmployeeResourceIT {
                 "Test Pending Company",
                 "pending@test.com",
                 "Test goal",
-                "http://articles.com",
                 "Test HQ",
                 "Test Executives"
         );

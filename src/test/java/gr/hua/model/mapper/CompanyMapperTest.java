@@ -45,7 +45,6 @@ class CompanyMapperTest {
                 "Test Company",
                 "test@company.com",
                 "Test goal",
-                "http://articles.com",
                 "Test HQ",
                 "Test Executives"
         );
@@ -70,7 +69,7 @@ class CompanyMapperTest {
         assertEquals(RegistrationState.ACCEPTED, response.getState());
         assertEquals(testTimestamp, response.getTimestamp());
         assertEquals("Test goal", response.getGoal());
-        assertEquals("http://articles.com", response.getArticlesOfAssociation());
+        assertNotNull(response.getArticleDocuments());
         assertEquals("Test HQ", response.getHq());
         assertEquals("Test Executives", response.getExecutives());
     }
@@ -98,7 +97,6 @@ class CompanyMapperTest {
                 "Pending Company",
                 "pending@company.com",
                 "Pending goal",
-                "http://pending.com",
                 "Pending HQ",
                 "Pending Executives"
         );
@@ -133,7 +131,6 @@ class CompanyMapperTest {
                 "Company 2",
                 "company2@test.com",
                 "Goal 2",
-                "http://articles2.com",
                 "HQ 2",
                 "Executives 2"
         );
@@ -145,7 +142,6 @@ class CompanyMapperTest {
                 "Company 3",
                 "company3@test.com",
                 "Goal 3",
-                "http://articles3.com",
                 "HQ 3",
                 "Executives 3"
         );
@@ -181,13 +177,13 @@ class CompanyMapperTest {
     @DisplayName("toCompanyResponseList should preserve order")
     void toCompanyResponseList_shouldPreserveOrder() {
         // Arrange
-        Company first = new Company(representative, "First", "first@test.com", "Goal 1", "http://1.com", "HQ 1", "Exec 1");
+        Company first = new Company(representative, "First", "first@test.com", "Goal 1", "HQ 1", "Exec 1");
         first.setId(1L);
 
-        Company second = new Company(representative, "Second", "second@test.com", "Goal 2", "http://2.com", "HQ 2", "Exec 2");
+        Company second = new Company(representative, "Second", "second@test.com", "Goal 2", "HQ 2", "Exec 2");
         second.setId(2L);
 
-        Company third = new Company(representative, "Third", "third@test.com", "Goal 3", "http://3.com", "HQ 3", "Exec 3");
+        Company third = new Company(representative, "Third", "third@test.com", "Goal 3", "HQ 3", "Exec 3");
         third.setId(3L);
 
         List<Company> companies = Arrays.asList(first, second, third);
@@ -206,13 +202,13 @@ class CompanyMapperTest {
     @DisplayName("toCompanyResponse should map different states correctly")
     void toCompanyResponse_shouldMapDifferentStates() {
         // Test PENDING state
-        Company pending = new Company(representative, "Pending", "pending@test.com", "Goal", "http://url.com", "HQ", "Exec");
+        Company pending = new Company(representative, "Pending", "pending@test.com", "Goal", "HQ", "Exec");
         pending.setId(1L);
         CompanyResponse pendingResponse = companyMapper.toCompanyResponse(pending);
         assertEquals(RegistrationState.PENDING, pendingResponse.getState());
 
         // Test ACCEPTED state
-        Company accepted = new Company(representative, "Accepted", "accepted@test.com", "Goal", "http://url.com", "HQ", "Exec");
+        Company accepted = new Company(representative, "Accepted", "accepted@test.com", "Goal", "HQ", "Exec");
         accepted.setId(2L);
         accepted.setState(RegistrationState.ACCEPTED);
         accepted.setTaxId("TAX-456");
@@ -221,7 +217,7 @@ class CompanyMapperTest {
         assertEquals("TAX-456", acceptedResponse.getTaxId());
 
         // Test DENIED state
-        Company denied = new Company(representative, "Denied", "denied@test.com", "Goal", "http://url.com", "HQ", "Exec");
+        Company denied = new Company(representative, "Denied", "denied@test.com", "Goal", "HQ", "Exec");
         denied.setId(3L);
         denied.setState(RegistrationState.DENIED);
         CompanyResponse deniedResponse = companyMapper.toCompanyResponse(denied);

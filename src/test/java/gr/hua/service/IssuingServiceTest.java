@@ -63,7 +63,6 @@ class IssuingServiceTest {
                 "Test Company",
                 "test@company.com",
                 "Test goal",
-                "http://articles.com",
                 "Test HQ",
                 "Test Executives"
         );
@@ -75,7 +74,6 @@ class IssuingServiceTest {
                 "Accepted Company",
                 "accepted@company.com",
                 "Accepted goal",
-                "http://accepted.com",
                 "Accepted HQ",
                 "Accepted Executives"
         );
@@ -89,7 +87,6 @@ class IssuingServiceTest {
                 "Denied Company",
                 "denied@company.com",
                 "Denied goal",
-                "http://denied.com",
                 "Denied HQ",
                 "Denied Executives"
         );
@@ -249,7 +246,6 @@ class IssuingServiceTest {
                 "Company 1",
                 "company1@test.com",
                 "Goal 1",
-                "http://art1.com",
                 "HQ 1",
                 "Exec 1"
         );
@@ -260,7 +256,6 @@ class IssuingServiceTest {
                 "Company 2",
                 "company2@test.com",
                 "Goal 2",
-                "http://art2.com",
                 "HQ 2",
                 "Exec 2"
         );

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,17 +38,18 @@ public class Company {
     private Timestamp timestamp;
 
     private String goal;
-    private String articlesOfAssociation;
     private String hq;
     private String executives;
 
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleDocument> articleDocuments = new ArrayList<>();
 
-    public Company(KeycloakUser representative, String name, String email, String goal, String articlesOfAssociation, String hq, String executives) {
+
+    public Company(KeycloakUser representative, String name, String email, String goal, String hq, String executives) {
         this.representative = representative;
         this.name = name;
         this.email = email;
         this.goal = goal;
-        this.articlesOfAssociation = articlesOfAssociation;
         this.hq = hq;
         this.executives = executives;
 
@@ -54,4 +57,3 @@ public class Company {
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 }
-

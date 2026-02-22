@@ -36,9 +36,37 @@ nb-configuration.xml
 *.orig
 *.rej
 
-# Local environment
+# Local environment variables (keep .env.example for documentation)
 .env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Logs
+*.log
+quarkus.log
+logs/
+/var/log/
 
 # Plugin directory
 /.quarkus/cli/plugins/
-quarkus.log
+
+# Test reports
+surefire-reports/
+failsafe-reports/
+
+# JaCoCo coverage
+jacoco.exec
+*.exec
+
+# Database files
+*.db
+*.sqlite
+*.h2.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
